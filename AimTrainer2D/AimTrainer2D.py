@@ -9,9 +9,9 @@ import pygame
 pygame.init()
 
 # Load Images
-TARGET = pygame.transform.scale(pygame.image.load(os.path.join("assets", "target.png")), (30, 30))
-BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background.jpg")), (1920, 1080))
-CROSSHAIR = pygame.transform.scale(pygame.image.load(os.path.join("assets", "crosshair.png")), (20, 20))
+TARGET = pygame.transform.scale(pygame.image.load("o:/Coding Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/target.png"), (30, 30))
+BG = pygame.transform.scale(pygame.image.load("o:/Coding Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/background.jpg"), (1920, 1080))
+CROSSHAIR = pygame.transform.scale(pygame.image.load("o:/Coding Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/crosshair.png"), (20, 20))
 # Set Window Settings
 WIDTH, HEIGHT = 1920, 1080
 GAME = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
