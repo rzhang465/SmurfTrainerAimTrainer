@@ -82,7 +82,7 @@ def main():
                         targets.remove(i)
                         score+=100
                     else:
-                        score-=10
+                        score-=20
         redraw_window() 
     pygame.quit()
 
