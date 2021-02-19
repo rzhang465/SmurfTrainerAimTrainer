@@ -9,9 +9,9 @@ import pygame
 pygame.init()
 
 # Load Images
-TARGET = pygame.transform.scale(pygame.image.load("o:/Coding Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/target.png"), (30, 30))
-BG = pygame.transform.scale(pygame.image.load("o:/Coding Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/background.jpg"), (1920, 1080))
-CROSSHAIR = pygame.transform.scale(pygame.image.load("o:/Coding Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/crosshair.png"), (20, 20))
+TARGET = pygame.transform.scale(pygame.image.load("o:/Coding_Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/target.png"), (30, 30))
+BG = pygame.transform.scale(pygame.image.load("o:/Coding_Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/background.jpg"), (1920, 1080))
+CROSSHAIR = pygame.transform.scale(pygame.image.load("o:/Coding_Projects/SmurfTrainerAimTrainer/AimTrainer2D/assets/crosshair.png"), (20, 20))
 # Set Window Settings
 WIDTH, HEIGHT = 1920, 1080
 GAME = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
@@ -41,49 +41,81 @@ class CHair:
     def setY(self, y):
         self.y=y
 
+class Scene(object):
+    def __init__(self):
+        pass
+
+    def render(self):
+        raise NotImplementedError
+
+    def update(self):
+        raise NotImplementedError
+
+    def handle_events(self, events):
+        raise NotImplementedError
+
+class GameScene(Scene):
+        def __init__(self):
+            super(GameScene, self).__init__()
+            self.score=0
+            self.targets=[]
+            self.font = pygame.font.Font("freesansbold.ttf", 32)
+            self.p1=CHair(960, 540)
+            
+
+        def render(self):
+            GAME.blit(BG, (0, 0))
+            scoreval = self.font.render("Score: " + str(self.score), True, "black") 
+            GAME.blit(scoreval, (50, 50))
+            pygame.draw.rect(GAME, "black", (315, 170, 1280, 720), 3)
+            for x in self.targets:
+                x.draw(GAME)
+            self.p1.draw(GAME)
+            pygame.display.update()
+
+
+        def update(self):    
+            x, y = pygame.mouse.get_pos()
+            self.p1.setX(x)
+            self.p1.setY(y)      
+            if (len(self.targets)<1):          
+                self.targets.append(Target(random.randint(500, 1300), random.randint(300, 700)))
+
+
+        def handle_events(self, events):
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    x, y = event.pos
+                    for i in self.targets:
+                        if ((x+10)<=(i.x+30) and (y+10)<=(i.y+30) and (x+10)>=i.x and (y+10)>=i.y):
+                            self.targets.remove(i)
+                            self.score+=100
+                        else:
+                            self.score-=20
+           
+
 def main():
 
-    score = 0 
-    font = pygame.font.Font("freesansbold.ttf", 32)
     run = True
     FPS = 60
     clock = pygame.time.Clock()
-    targTime = pygame.time.Clock()
-    p1=CHair(960, 540)
-    targets = []
-
-    def redraw_window():
-        GAME.blit(BG, (0, 0))
-        scoreval = font.render("Score: " + str(score), True, "black") 
-        GAME.blit(scoreval, (50, 50))
-        pygame.draw.rect(GAME, "black", (315, 170, 1280, 720), 3)
-        for x in targets:
-             x.draw(GAME)
-        p1.draw(GAME)
-        pygame.display.update()
+    scene = GameScene()
 
     while run:
         pygame.mouse.set_visible(False)
-        clock.tick(FPS)
-        x, y = pygame.mouse.get_pos()
-        p1.setX(x)
-        p1.setY(y)
-        if (len(targets)<1):          
-            targets.append(Target(random.randint(500, 1300), random.randint(300, 700)))
+
+        clock.tick(FPS) 
+
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
-                for i in targets:
-                    if ((x+10)<=(i.x+30) and (y+10)<=(i.y+30) and (x+10)>=i.x and (y+10)>=i.y):
-                        targets.remove(i)
-                        score+=100
-                    else:
-                        score-=20
-        redraw_window() 
+
+        scene.update()
+        scene.handle_events(events)
+        scene.render()
+        
     pygame.quit()
 
 main()
