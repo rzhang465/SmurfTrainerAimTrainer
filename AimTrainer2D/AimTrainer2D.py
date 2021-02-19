@@ -92,7 +92,31 @@ class GameScene(Scene):
                             self.score+=100
                         else:
                             self.score-=20
-           
+                             
+
+class TitleScene(Scene):
+
+    def __init__(self):
+        super(TitleScene, self).__init__()
+        self.font = pygame.font.SysFont("freesansbold.ttf", 100)
+        self.sfont = pygame.font.SysFont("freesansbold.ttf", 64)
+        self.swap=False
+
+    def render(self):
+        GAME.blit(BG, (0, 0))
+        text1 = self.font.render("Welcome to Aim Trainer", True, "black")
+        text2 = self.sfont.render("> press space to start <", True, "black")
+        GAME.blit(text1, (570, 370))
+        GAME.blit(text2, (720, 540))
+        pygame.display.update()
+
+
+    def handle_events(self, events):
+        for e in events:
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                self.swap=True
+
+    
 
 def main():
 
@@ -100,6 +124,7 @@ def main():
     FPS = 60
     clock = pygame.time.Clock()
     scene = GameScene()
+    title = TitleScene()
 
     while run:
         pygame.mouse.set_visible(False)
@@ -111,11 +136,18 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
+        if (title.swap==False):
+            title.render()
+            title.handle_events(events)
+            if (title.swap==True):
+                scene.update()
+                scene.render()
+                scene.handle_events(events)
+        else :
+            scene.update()
+            scene.render()
+            scene.handle_events(events)
 
-        scene.update()
-        scene.handle_events(events)
-        scene.render()
-        
     pygame.quit()
 
 main()
